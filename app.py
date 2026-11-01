@@ -67,7 +67,7 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
 [data-testid="stHeader"] { background: transparent; }
 [data-testid="stMain"] .block-container {
     max-width: 1050px;
-    padding: 1.25rem 2.5rem 6rem;
+    padding: 1.25rem 2.5rem 8rem;
 }
 [data-testid="stSidebar"] { background: rgba(17,26,35,.97); border-right: 1px solid #273540; }
 [data-testid="stSidebar"] > div:first-child { padding: 1.1rem .9rem; }
@@ -177,13 +177,16 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
     background: transparent;
     align-items: flex-start;
     gap: .8rem;
-    max-width: 900px;
-    margin: 1rem auto;
+    max-width: 100%;
+    width: 100%;
+    margin: 1rem 0;
     padding: .2rem 0;
     animation: rise-in .38s ease-out both;
+    justify-content: flex-start;
 }
 [data-testid="stChatMessageContent"] {
-    max-width: 100%;
+    max-width: calc(100% - 60px);
+    width: 100%;
     padding: .9rem 1.1rem;
     border: 1px solid rgba(126,154,176,.13);
     border-left: 2px solid rgba(151,194,221,.55);
@@ -197,9 +200,10 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
 [data-testid="stChatMessageContent"] h1,
 [data-testid="stChatMessageContent"] h2,
 [data-testid="stChatMessageContent"] h3 { color: #f0f5f9; }
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) { justify-content: flex-end; }
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) { justify-content: flex-start; }
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) [data-testid="stChatMessageContent"] {
-    max-width: min(78%, 680px);
+    max-width: calc(100% - 60px);
+    width: 100%;
     border: 1px solid rgba(119,174,207,.24);
     border-radius: 14px 4px 14px 14px;
     background: linear-gradient(145deg, rgba(35,65,84,.92), rgba(27,48,64,.92));
@@ -233,7 +237,17 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
     background-image: none !important;
     box-shadow: none !important;
 }
-[data-testid="stBottomBlockContainer"] { padding-bottom: 1rem; }
+[data-testid="stBottomBlockContainer"] { 
+    padding-bottom: 1rem;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: calc(50% + 150px) !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 300px) !important;
+    max-width: 1050px !important;
+    z-index: 999 !important;
+    background: linear-gradient(to top, #0c1219 85%, transparent) !important;
+}
 [data-testid="stChatInput"] {
     background: #151f29;
     border: 1px solid #354550;
@@ -246,6 +260,35 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
 [data-testid="stChatInput"] textarea { color: var(--ink); background: #151f29; }
 [data-testid="stChatInput"] textarea::placeholder { color: #92a1ae; opacity: 1; }
 [data-testid="stChatInput"]:focus-within { border-color: #6592ac; box-shadow: 0 0 0 3px rgba(112,164,193,.12), 0 8px 26px rgba(0,0,0,.24); }
+
+/* Chat container - scrollable area */
+[data-testid="stVerticalBlock"]:has([data-testid="stChatMessage"]) {
+    max-height: calc(100vh - 240px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 140px;
+    margin-bottom: 40px;
+    padding-right: 4px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+[data-testid="stVerticalBlock"]:has([data-testid="stChatMessage"])::-webkit-scrollbar {
+    display: none;
+}
+
+/* Ensure chat messages have proper spacing */
+[data-testid="stChatMessage"] {
+    border: 0;
+    background: transparent;
+    align-items: flex-start;
+    gap: .8rem;
+    max-width: 900px;
+    margin: 1rem auto;
+    padding: .2rem 0;
+    animation: rise-in .38s ease-out both;
+}
 [data-testid="stAlert"] { background: #17232d; border-color: #344756; color: var(--ink); }
 [data-testid="stExpander"] { background: rgba(21,31,41,.72); border-color: #30404d; }
 @media (max-width: 760px) {
@@ -352,24 +395,27 @@ def main():
         st.divider()
         st.caption(f"Model · {status['llm_model']}")
 
-    if not st.session_state.chat_history:
-        st.markdown(
-            '<div class="welcome"><div class="welcome-mark">✳</div>'
-            '<h1>Hello, what can I help you find?</h1>'
-            '<p>Ask a question about your PDFs and get answers with page-level sources.</p></div>',
-            unsafe_allow_html=True
-        )
-        if not chunk_count:
-            st.info("Upload PDFs in the sidebar, then select **Index PDFs** to start asking questions.")
+    # Create a container for chat history
+    chat_container = st.container()
+    with chat_container:
+        if not st.session_state.chat_history:
+            st.markdown(
+                '<div class="welcome"><div class="welcome-mark">✳</div>'
+                '<h1>Hello, what can I help you find?</h1></div>',
+                unsafe_allow_html=True
+            )
+            if not chunk_count:
+                st.info("Upload PDFs in the sidebar, then select **Index PDFs** to start asking questions.")
 
-    for message in st.session_state.chat_history:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
-            if message["role"] == "assistant" and message.get("citations"):
-                with st.expander("Sources"):
-                    for citation in message["citations"]:
-                        st.caption(f"{citation['source']} (Page {citation['page_number']})")
+        for message in st.session_state.chat_history:
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
+                if message["role"] == "assistant" and message.get("citations"):
+                    with st.expander("Sources"):
+                        for citation in message["citations"]:
+                            st.caption(f"{citation['source']} (Page {citation['page_number']})")
 
+    # Fixed input area at the bottom
     question = st.chat_input("Ask about your documents", disabled=chunk_count == 0)
     if question:
         handle_question(question)
