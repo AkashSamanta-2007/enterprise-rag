@@ -1,6 +1,7 @@
 """
 PDF Ingestion Module
 Handles PDF document loading and text extraction using PyMuPDF.
+also file name and page number metadata for each extracted page.
 """
 
 import logging

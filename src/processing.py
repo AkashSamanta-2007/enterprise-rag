@@ -1,6 +1,6 @@
 """
 Text Chunking and Embedding Module
-Handles splitting documents into chunks and generating embeddings.
+Handles splitting documents into chunks and generating embeddings using sentence-transformers.
 """
 
 import logging

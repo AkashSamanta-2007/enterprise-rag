@@ -107,12 +107,12 @@ class TestRAGPipeline:
             {"text": "Test content", "source": "doc.pdf", "page_number": 1}
         ]
         mock_dp.return_value.embedding_model.encode.return_value = np.array([[0.1, 0.2]])
-        mock_llm.return_value.generate_answer.return_value = "This is the answer."
+        mock_llm.return_value.generate_answer.return_value = "This is the answer. [doc.pdf, page 1]"
         
         pipeline = RAGPipeline()
         result = pipeline.query("Test question")
         
-        assert result["answer"] == "This is the answer."
+        assert result["answer"] == "This is the answer. [doc.pdf, page 1]"
         assert len(result["citations"]) == 1
         assert result["citations"][0]["source"] == "doc.pdf"
         assert result["citations"][0]["page_number"] == 1
@@ -135,7 +135,7 @@ class TestRAGPipeline:
         result = pipeline.query("Unknown question")
         
         assert "do not provide enough information" in result["answer"].lower()
-        assert len(result["citations"]) == 1
+        assert result["citations"] == []
     
     @patch('src.rag_pipeline.VectorStore')
     @patch('src.rag_pipeline.GroqClient')
@@ -170,14 +170,14 @@ class TestRAGPipeline:
             {"text": "Content 2", "source": "guide.pdf", "page_number": 10},
         ]
         mock_dp.return_value.embedding_model.encode.return_value = np.array([[0.1, 0.2]])
-        mock_llm.return_value.generate_answer.return_value = "Answer"
+        mock_llm.return_value.generate_answer.return_value = "Answer [guide.pdf, page 10]"
         
         pipeline = RAGPipeline()
         result = pipeline.query("Test")
         
-        assert len(result["citations"]) == 2
-        assert result["citations"][0] == {"source": "manual.pdf", "page_number": 5}
-        assert result["citations"][1] == {"source": "guide.pdf", "page_number": 10}
+        assert result["citations"] == [
+            {"source": "guide.pdf", "page_number": 10}
+        ]
     
     def test_get_status(self):
         """Test getting pipeline status."""
@@ -196,3 +196,18 @@ class TestRAGPipeline:
             assert status["documents_in_store"] == 10
             assert status["llm_model"] == "llama-3.1-70b-versatile"
             assert status["embedding_dim"] == 384
+
+    def test_delete_document_removes_source_from_vector_store(self):
+        """Test that deleting a document delegates to source-specific index deletion."""
+        vector_store = Mock()
+        vector_store.delete_by_source.return_value = 3
+
+        with patch('src.rag_pipeline.PDFExtractor'):
+            pipeline = RAGPipeline(
+                vector_store=vector_store,
+                llm_client=Mock(),
+                document_processor=Mock()
+            )
+
+        assert pipeline.delete_document("policy.pdf") == 3
+        vector_store.delete_by_source.assert_called_once_with("policy.pdf")
