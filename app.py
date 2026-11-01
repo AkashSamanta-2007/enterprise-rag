@@ -79,6 +79,16 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
     border-radius: 8px;
 }
 [data-testid="stSidebar"] [data-testid="stFileUploader"] section * { color: #c9d5df; }
+[data-testid="stSidebar"] [data-testid="stFileUploader"] button {
+    background: rgb(68, 68, 225) !important;
+    border: 1px solid rgb(68, 68, 225) !important;
+    color: #dce5ed !important;
+}
+[data-testid="stSidebar"] [data-testid="stFileUploader"] button:hover {
+    background: rgb(85, 85, 245) !important;
+    border-color: rgb(85, 85, 245) !important;
+    color: #f0f6fb !important;
+}
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
     background: rgba(255,255,255,.045);
     border: 1px solid #30404d;
@@ -155,19 +165,33 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
     letter-spacing: 0;
 }
 .welcome p { margin: .7rem auto 0; color: #a0adba; font-size: 14px; }
+div[data-testid="stButton"] button {
+    background: #4444e1 !important;
+    border: 1px solid #4444e1 !important;
+}
+div[data-testid="stButton"] button p {
+    color: #dce5ed !important;
+}
+div[data-testid="stButton"] button:hover {
+    background: #5555f5 !important;
+    border-color: #5555f5 !important;
+}
+div[data-testid="stButton"] button:hover p {
+    color: #f0f6fb !important;
+}
 [data-testid="stBaseButton-secondary"] {
     border-radius: 8px;
     color: #dce5ed;
-    background: rgba(22,32,42,.86);
-    border: 1px solid #30404d;
+    background: #4444e1;
+    border: 1px solid #4444e1;
     text-align: left;
     min-height: 54px;
     white-space: normal;
     transition: transform .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 [data-testid="stBaseButton-secondary"]:hover {
-    background: #1d2b37;
-    border-color: #48677c;
+    background: #5555f5;
+    border-color: #5555f5;
     color: #f0f6fb;
     transform: translateY(-2px);
     box-shadow: 0 5px 18px rgba(0,0,0,.24);
@@ -315,6 +339,9 @@ if "pipeline" not in st.session_state:
         st.session_state.pipeline = None
         st.session_state.init_error = str(e)
 
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
@@ -322,6 +349,8 @@ if "indexed" not in st.session_state:
     st.session_state.indexed = False
 if "pending_delete" not in st.session_state:
     st.session_state.pending_delete = None
+if "has_asked" not in st.session_state:
+    st.session_state.has_asked = False
 
 
 def main():
@@ -343,7 +372,9 @@ def main():
     with st.sidebar:
         st.markdown('<div class="brand"><span class="brand-mark">✳</span>EnterpriseRAG</div>', unsafe_allow_html=True)
         if st.button("＋  New chat", use_container_width=True):
+            st.session_state.messages = []
             st.session_state.chat_history = []
+            st.session_state.has_asked = False
             st.rerun()
 
         st.markdown('<div class="sidebar-label">Your documents</div>', unsafe_allow_html=True)
@@ -398,7 +429,7 @@ def main():
     # Create a container for chat history
     chat_container = st.container()
     with chat_container:
-        if not st.session_state.chat_history:
+        if not st.session_state.get("messages"):
             st.markdown(
                 '<div class="welcome"><div class="welcome-mark">✳</div>'
                 '<h1>Hello, what can I help you find?</h1></div>',
@@ -407,7 +438,7 @@ def main():
             if not chunk_count:
                 st.info("Upload PDFs in the sidebar, then select **Index PDFs** to start asking questions.")
 
-        for message in st.session_state.chat_history:
+        for message in st.session_state.get("messages", []):
             with st.chat_message(message["role"]):
                 st.write(message["content"])
                 if message["role"] == "assistant" and message.get("citations"):
@@ -509,6 +540,13 @@ def handle_question(question):
         return
     
     # Add user message to history
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    st.session_state.messages.append({
+        "role": "user",
+        "content": validated_question,
+        "timestamp": datetime.now().isoformat()
+    })
     st.session_state.chat_history.append({
         "role": "user",
         "content": validated_question,
@@ -535,6 +573,14 @@ def handle_question(question):
                             st.caption(f"{citation['source']} (Page {citation['page_number']})")
                 
                 # Add to history
+                if "messages" not in st.session_state:
+                    st.session_state.messages = []
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": answer,
+                    "citations": citations,
+                    "timestamp": datetime.now().isoformat()
+                })
                 st.session_state.chat_history.append({
                     "role": "assistant",
                     "content": answer,
@@ -546,6 +592,14 @@ def handle_question(question):
                 error_msg = "An error occurred while processing your question."
                 st.error(error_msg)
                 st.session_state.chat_history.append({
+                    "role": "assistant",
+                    "content": error_msg,
+                    "citations": [],
+                    "timestamp": datetime.now().isoformat()
+                })
+                if "messages" not in st.session_state:
+                    st.session_state.messages = []
+                st.session_state.messages.append({
                     "role": "assistant",
                     "content": error_msg,
                     "citations": [],
