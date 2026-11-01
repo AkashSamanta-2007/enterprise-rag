@@ -22,7 +22,7 @@ class InputValidator:
     MIN_QUESTION_LENGTH = 3
     
     # Allowed filename pattern (alphanumeric, dash, underscore, dot)
-    FILENAME_PATTERN = re.compile(r'^[a-zA-Z0-9][a-zA-Z0-9._-]*\.pdf$')
+    FILENAME_PATTERN = re.compile(r'^[a-zA-Z0-9][a-zA-Z0-9 ._-]*\.pdf$', re.IGNORECASE)
     
     @classmethod
     def validate_question(cls, question: str) -> str:
@@ -95,7 +95,7 @@ class InputValidator:
             raise ValidationError("Only PDF files are allowed")
         
         if not cls.FILENAME_PATTERN.match(basename):
-            raise ValidationError("Invalid filename. Use only alphanumeric characters, dots, dashes, and underscores")
+            raise ValidationError("Invalid filename. Use only alphanumeric characters, spaces, dots, dashes, and underscores")
         
         return basename
     

@@ -164,6 +164,22 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Error getting count: {e}")
             return 0
+
+    def delete_by_source(self, source: str) -> int:
+        """Delete all indexed chunks belonging to one source file."""
+        try:
+            results = self.collection.get(
+                where={"source": source},
+                include=["metadatas"]
+            )
+            ids = results.get("ids", [])
+            if ids:
+                self.collection.delete(ids=ids)
+            logger.info(f"Deleted {len(ids)} chunks for source {source}")
+            return len(ids)
+        except Exception as e:
+            logger.error(f"Error deleting source {source} from vector store: {e}")
+            raise RetrievalError(f"Failed to delete source: {e}")
     
     def clear(self) -> None:
         """Clear all documents from collection."""

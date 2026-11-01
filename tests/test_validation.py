@@ -44,6 +44,16 @@ class TestInputValidator:
         """Test valid filename."""
         f = validate_filename("document.pdf")
         assert f == "document.pdf"
+
+    def test_validate_filename_uppercase_extension(self):
+        """Test uppercase PDF extension is accepted."""
+        f = validate_filename("document.PDF")
+        assert f == "document.PDF"
+
+    def test_validate_filename_with_spaces(self):
+        """Test spaces in a PDF filename are accepted."""
+        f = validate_filename("Company Handbook.pdf")
+        assert f == "Company Handbook.pdf"
     
     def test_validate_filename_with_path_traversal(self):
         """Test path traversal blocked."""
@@ -56,9 +66,9 @@ class TestInputValidator:
             validate_filename("document.txt")
     
     def test_validate_filename_invalid_chars(self):
-        """Test invalid characters rejected."""
+        """Test unsupported characters are rejected."""
         with pytest.raises(ValidationError):
-            validate_filename("doc ument.pdf")
+            validate_filename("doc@ument.pdf")
     
     def test_validate_pdf_path_within_dir(self):
         """Test path validation within directory."""
