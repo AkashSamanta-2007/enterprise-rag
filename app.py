@@ -184,10 +184,23 @@ div[data-testid="stButton"] button:hover p {
     color: #dce5ed;
     background: #4444e1;
     border: 1px solid #4444e1;
-    text-align: left;
-    min-height: 54px;
-    white-space: normal;
+    text-align: center;
+    min-height: 28px;
+    max-height: 28px;
+    height: 28px;
+    padding: 0 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1;
     transition: transform .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+[data-testid="stBaseButton-secondary"] p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    margin: 0;
+    line-height: 1;
 }
 [data-testid="stBaseButton-secondary"]:hover {
     background: #5555f5;
