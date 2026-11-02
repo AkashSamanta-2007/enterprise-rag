@@ -67,7 +67,7 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
 [data-testid="stHeader"] { background: transparent; }
 [data-testid="stMain"] .block-container {
     max-width: 1050px;
-    padding: 1.25rem 2.5rem 6rem;
+    padding: 1.25rem 2.5rem 8rem;
 }
 [data-testid="stSidebar"] { background: rgba(17,26,35,.97); border-right: 1px solid #273540; }
 [data-testid="stSidebar"] > div:first-child { padding: 1.1rem .9rem; }
@@ -79,6 +79,16 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
     border-radius: 8px;
 }
 [data-testid="stSidebar"] [data-testid="stFileUploader"] section * { color: #c9d5df; }
+[data-testid="stSidebar"] [data-testid="stFileUploader"] button {
+    background: rgb(68, 68, 225) !important;
+    border: 1px solid rgb(68, 68, 225) !important;
+    color: #dce5ed !important;
+}
+[data-testid="stSidebar"] [data-testid="stFileUploader"] button:hover {
+    background: rgb(85, 85, 245) !important;
+    border-color: rgb(85, 85, 245) !important;
+    color: #f0f6fb !important;
+}
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
     background: rgba(255,255,255,.045);
     border: 1px solid #30404d;
@@ -155,19 +165,46 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
     letter-spacing: 0;
 }
 .welcome p { margin: .7rem auto 0; color: #a0adba; font-size: 14px; }
+div[data-testid="stButton"] button {
+    background: #4444e1 !important;
+    border: 1px solid #4444e1 !important;
+}
+div[data-testid="stButton"] button p {
+    color: #dce5ed !important;
+}
+div[data-testid="stButton"] button:hover {
+    background: #5555f5 !important;
+    border-color: #5555f5 !important;
+}
+div[data-testid="stButton"] button:hover p {
+    color: #f0f6fb !important;
+}
 [data-testid="stBaseButton-secondary"] {
     border-radius: 8px;
     color: #dce5ed;
-    background: rgba(22,32,42,.86);
-    border: 1px solid #30404d;
-    text-align: left;
-    min-height: 54px;
-    white-space: normal;
+    background: #4444e1;
+    border: 1px solid #4444e1;
+    text-align: center;
+    min-height: 28px;
+    max-height: 28px;
+    height: 28px;
+    padding: 0 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1;
     transition: transform .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
+[data-testid="stBaseButton-secondary"] p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    margin: 0;
+    line-height: 1;
+}
 [data-testid="stBaseButton-secondary"]:hover {
-    background: #1d2b37;
-    border-color: #48677c;
+    background: #5555f5;
+    border-color: #5555f5;
     color: #f0f6fb;
     transform: translateY(-2px);
     box-shadow: 0 5px 18px rgba(0,0,0,.24);
@@ -177,13 +214,16 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
     background: transparent;
     align-items: flex-start;
     gap: .8rem;
-    max-width: 900px;
-    margin: 1rem auto;
+    max-width: 100%;
+    width: 100%;
+    margin: 1rem 0;
     padding: .2rem 0;
     animation: rise-in .38s ease-out both;
+    justify-content: flex-start;
 }
 [data-testid="stChatMessageContent"] {
-    max-width: 100%;
+    max-width: calc(100% - 60px);
+    width: 100%;
     padding: .9rem 1.1rem;
     border: 1px solid rgba(126,154,176,.13);
     border-left: 2px solid rgba(151,194,221,.55);
@@ -197,9 +237,10 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
 [data-testid="stChatMessageContent"] h1,
 [data-testid="stChatMessageContent"] h2,
 [data-testid="stChatMessageContent"] h3 { color: #f0f5f9; }
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) { justify-content: flex-end; }
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) { justify-content: flex-start; }
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) [data-testid="stChatMessageContent"] {
-    max-width: min(78%, 680px);
+    max-width: calc(100% - 60px);
+    width: 100%;
     border: 1px solid rgba(119,174,207,.24);
     border-radius: 14px 4px 14px 14px;
     background: linear-gradient(145deg, rgba(35,65,84,.92), rgba(27,48,64,.92));
@@ -233,7 +274,17 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
     background-image: none !important;
     box-shadow: none !important;
 }
-[data-testid="stBottomBlockContainer"] { padding-bottom: 1rem; }
+[data-testid="stBottomBlockContainer"] { 
+    padding-bottom: 1rem;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: calc(50% + 150px) !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 300px) !important;
+    max-width: 1050px !important;
+    z-index: 999 !important;
+    background: linear-gradient(to top, #0c1219 85%, transparent) !important;
+}
 [data-testid="stChatInput"] {
     background: #151f29;
     border: 1px solid #354550;
@@ -246,6 +297,35 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
 [data-testid="stChatInput"] textarea { color: var(--ink); background: #151f29; }
 [data-testid="stChatInput"] textarea::placeholder { color: #92a1ae; opacity: 1; }
 [data-testid="stChatInput"]:focus-within { border-color: #6592ac; box-shadow: 0 0 0 3px rgba(112,164,193,.12), 0 8px 26px rgba(0,0,0,.24); }
+
+/* Chat container - scrollable area */
+[data-testid="stVerticalBlock"]:has([data-testid="stChatMessage"]) {
+    max-height: calc(100vh - 240px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 140px;
+    margin-bottom: 40px;
+    padding-right: 4px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+[data-testid="stVerticalBlock"]:has([data-testid="stChatMessage"])::-webkit-scrollbar {
+    display: none;
+}
+
+/* Ensure chat messages have proper spacing */
+[data-testid="stChatMessage"] {
+    border: 0;
+    background: transparent;
+    align-items: flex-start;
+    gap: .8rem;
+    max-width: 900px;
+    margin: 1rem auto;
+    padding: .2rem 0;
+    animation: rise-in .38s ease-out both;
+}
 [data-testid="stAlert"] { background: #17232d; border-color: #344756; color: var(--ink); }
 [data-testid="stExpander"] { background: rgba(21,31,41,.72); border-color: #30404d; }
 @media (max-width: 760px) {
@@ -272,6 +352,9 @@ if "pipeline" not in st.session_state:
         st.session_state.pipeline = None
         st.session_state.init_error = str(e)
 
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
@@ -279,6 +362,8 @@ if "indexed" not in st.session_state:
     st.session_state.indexed = False
 if "pending_delete" not in st.session_state:
     st.session_state.pending_delete = None
+if "has_asked" not in st.session_state:
+    st.session_state.has_asked = False
 
 
 def main():
@@ -300,7 +385,9 @@ def main():
     with st.sidebar:
         st.markdown('<div class="brand"><span class="brand-mark">✳</span>EnterpriseRAG</div>', unsafe_allow_html=True)
         if st.button("＋  New chat", use_container_width=True):
+            st.session_state.messages = []
             st.session_state.chat_history = []
+            st.session_state.has_asked = False
             st.rerun()
 
         st.markdown('<div class="sidebar-label">Your documents</div>', unsafe_allow_html=True)
@@ -352,24 +439,27 @@ def main():
         st.divider()
         st.caption(f"Model · {status['llm_model']}")
 
-    if not st.session_state.chat_history:
-        st.markdown(
-            '<div class="welcome"><div class="welcome-mark">✳</div>'
-            '<h1>Hello, what can I help you find?</h1>'
-            '<p>Ask a question about your PDFs and get answers with page-level sources.</p></div>',
-            unsafe_allow_html=True
-        )
-        if not chunk_count:
-            st.info("Upload PDFs in the sidebar, then select **Index PDFs** to start asking questions.")
+    # Create a container for chat history
+    chat_container = st.container()
+    with chat_container:
+        if not st.session_state.get("messages"):
+            st.markdown(
+                '<div class="welcome"><div class="welcome-mark">✳</div>'
+                '<h1>Hello, what can I help you find?</h1></div>',
+                unsafe_allow_html=True
+            )
+            if not chunk_count:
+                st.info("Upload PDFs in the sidebar, then select **Index PDFs** to start asking questions.")
 
-    for message in st.session_state.chat_history:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
-            if message["role"] == "assistant" and message.get("citations"):
-                with st.expander("Sources"):
-                    for citation in message["citations"]:
-                        st.caption(f"{citation['source']} (Page {citation['page_number']})")
+        for message in st.session_state.get("messages", []):
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
+                if message["role"] == "assistant" and message.get("citations"):
+                    with st.expander("Sources"):
+                        for citation in message["citations"]:
+                            st.caption(f"{citation['source']} (Page {citation['page_number']})")
 
+    # Fixed input area at the bottom
     question = st.chat_input("Ask about your documents", disabled=chunk_count == 0)
     if question:
         handle_question(question)
@@ -463,6 +553,13 @@ def handle_question(question):
         return
     
     # Add user message to history
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    st.session_state.messages.append({
+        "role": "user",
+        "content": validated_question,
+        "timestamp": datetime.now().isoformat()
+    })
     st.session_state.chat_history.append({
         "role": "user",
         "content": validated_question,
@@ -489,6 +586,14 @@ def handle_question(question):
                             st.caption(f"{citation['source']} (Page {citation['page_number']})")
                 
                 # Add to history
+                if "messages" not in st.session_state:
+                    st.session_state.messages = []
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": answer,
+                    "citations": citations,
+                    "timestamp": datetime.now().isoformat()
+                })
                 st.session_state.chat_history.append({
                     "role": "assistant",
                     "content": answer,
@@ -500,6 +605,14 @@ def handle_question(question):
                 error_msg = "An error occurred while processing your question."
                 st.error(error_msg)
                 st.session_state.chat_history.append({
+                    "role": "assistant",
+                    "content": error_msg,
+                    "citations": [],
+                    "timestamp": datetime.now().isoformat()
+                })
+                if "messages" not in st.session_state:
+                    st.session_state.messages = []
+                st.session_state.messages.append({
                     "role": "assistant",
                     "content": error_msg,
                     "citations": [],
