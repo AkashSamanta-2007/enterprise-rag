@@ -33,10 +33,36 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
 [data-testid="stAppViewContainer"] {
     position: relative;
     isolation: isolate;
+    background: transparent !important;
+}
+
+/* Fixed background */
+[data-testid="stAppViewContainer"]::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+
     background-color: #0c1219;
     background-image:
-        linear-gradient(125deg, #0c1219 0%, #142432 40%, #101a22 68%, #0c1219 100%);
-    background-size: 190% 190%;
+        linear-gradient(125deg, #0c1219 0%, #142432 40%, #101a22 68%, #0c1219 100%),
+        linear-gradient(90deg, transparent 0 46px, rgba(87,190,218,.12) 46px 47px, transparent 47px 118px),
+        linear-gradient(0deg, transparent 0 70px, rgba(87,190,218,.10) 70px 71px, transparent 71px 118px),
+        radial-gradient(circle at 47px 71px, rgba(113,220,239,.58) 0 1.5px, transparent 2.5px);
+
+    background-size:
+        100% 100%,
+        118px 118px,
+        118px 118px,
+        118px 118px;
+
+    background-attachment: fixed;
+    opacity: 1;
+
+    animation:
+        circuit-scroll 30s linear infinite,
+        circuit-pulse 4.8s ease-in-out infinite alternate;
 }
 [data-testid="stAppViewContainer"]::before {
     content: "";
