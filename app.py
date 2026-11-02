@@ -1,4 +1,5 @@
-
+"""
+EnterpriseRAG: A Streamlit app for enterprise document question answering using RAG (Retrieval-Augmented Generation)."""
 import streamlit as st
 from pathlib import Path
 from datetime import datetime
