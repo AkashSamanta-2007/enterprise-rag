@@ -39,6 +39,25 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
         linear-gradient(125deg, #0c1219 0%, #142432 40%, #101a22 68%, #0c1219 100%);
     background-size: 190% 190%;
 }
+[data-testid="stMain"] {
+    margin-left: 21rem;
+}
+[data-testid="stSidebar"] { 
+    background: rgba(17,26,35,.97); 
+    border-right: 1px solid #273540; 
+    position: fixed !important;
+    height: 100vh !important;
+    top: 0;
+    left: 0;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    z-index: 100;
+}
+[data-testid="stSidebar"] > div:first-child { 
+    padding: 1.1rem .9rem;
+    min-height: 100%;
+    overflow-y: auto;
+}
 [data-testid="stAppViewContainer"]::before {
     content: "";
     position: fixed;
@@ -70,8 +89,18 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
     max-width: 1050px;
     padding: 1.25rem 2.5rem 8rem;
 }
-[data-testid="stSidebar"] { background: rgba(17,26,35,.97); border-right: 1px solid #273540; }
-[data-testid="stSidebar"] > div:first-child { padding: 1.1rem .9rem; }
+[data-testid="stSidebar"] { 
+    background: rgba(17,26,35,.97); 
+    border-right: 1px solid #273540; 
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+[data-testid="stSidebar"] > div:first-child { 
+    padding: 1.1rem .9rem;
+    height: 100%;
+}
 [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] { color: var(--ink); }
 [data-testid="stSidebar"] [data-testid="stCaptionContainer"] { color: var(--muted); }
 [data-testid="stSidebar"] [data-testid="stFileUploader"] section {
