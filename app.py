@@ -26,11 +26,13 @@ st.markdown("""
     --muted: #9aa9b7;
     --line: #293743;
     --sidebar: #111a23;
+    --sidebar-width: 21rem;
     --accent: #a9d8f2;
     --green: #74c995;
 }
 
 html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; color: var(--ink); }
+html { scroll-behavior: smooth; }
 [data-testid="stAppViewContainer"] {
     position: relative;
     isolation: isolate;
@@ -65,8 +67,16 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
         circuit-scroll 30s linear infinite,
         circuit-pulse 4.8s ease-in-out infinite alternate;
 }
-[data-testid="stMain"] {
-    margin-left: 21rem;
+section.main,
+[data-testid="ScrollToBottomContainer"] {
+    box-sizing: border-box;
+    width: calc(100% - var(--sidebar-width));
+    margin-left: var(--sidebar-width);
+    height: 100vh;
+    max-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
 }
 [data-testid="stSidebar"] { 
     background: rgba(17,26,35,.97); 
@@ -111,7 +121,9 @@ html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; col
     animation: scan-sweep 11s linear infinite;
 }
 [data-testid="stHeader"] { background: transparent; }
-[data-testid="stMain"] .block-container {
+[data-testid="stAppViewBlockContainer"] {
+    box-sizing: border-box;
+    width: 100%;
     max-width: 1050px;
     padding: 1.25rem 2.5rem 8rem;
 }
@@ -321,54 +333,38 @@ div[data-testid="stButton"] button:hover p {
     background: rgba(10,17,24,.42);
 }
 [data-testid="stExpander"] summary { color: #b9d9eb; font-size: 13px; }
-[data-testid="stBottom"], [data-testid="stBottomBlockContainer"] {
-    background: #0c1219 !important;
-    background-image: none !important;
-}
-[data-testid="stBottom"] > div {
-    background: #0c1219 !important;
-    background-image: none !important;
-    box-shadow: none !important;
-}
-[data-testid="stBottomBlockContainer"] { 
-    padding-bottom: 1rem;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: calc(50% + 150px) !important;
-    transform: translateX(-50%) !important;
-    width: calc(100% - 300px) !important;
-    max-width: 1050px !important;
-    z-index: 999 !important;
-    background: linear-gradient(to top, #0c1219 85%, transparent) !important;
-}
-[data-testid="stChatInput"] {
-    background: #151f29;
+[data-testid="stForm"] {
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 1.25rem;
+    left: calc(var(--sidebar-width) + (100vw - var(--sidebar-width)) / 2);
+    transform: translateX(-50%);
+    padding: .55rem .65rem;
+    width: min(900px, calc(100vw - var(--sidebar-width) - 5rem));
+    margin: 0;
     border: 1px solid #354550;
     border-radius: 24px;
+    background: #151f29;
     box-shadow: 0 8px 26px rgba(0,0,0,.24);
     transition: border-color .2s ease, box-shadow .2s ease;
+    z-index: 1000;
 }
-[data-testid="stChatInput"] > div:first-child { background: #151f29 !important; color: var(--ink) !important; }
-[data-testid="stChatInputSubmitButton"] { background: #233848 !important; color: #b7dff4 !important; }
-[data-testid="stChatInput"] textarea { color: var(--ink); background: #151f29; }
-[data-testid="stChatInput"] textarea::placeholder { color: #92a1ae; opacity: 1; }
-[data-testid="stChatInput"]:focus-within { border-color: #6592ac; box-shadow: 0 0 0 3px rgba(112,164,193,.12), 0 8px 26px rgba(0,0,0,.24); }
-
-/* Chat container - scrollable area */
-[data-testid="stVerticalBlock"]:has([data-testid="stChatMessage"]) {
-    max-height: calc(100vh - 240px);
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding-bottom: 140px;
-    margin-bottom: 40px;
-    padding-right: 4px;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+[data-testid="stForm"] [data-testid="stTextInput"] input {
+    color: var(--ink);
+    background: #151f29;
+    border-color: transparent;
 }
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-[data-testid="stVerticalBlock"]:has([data-testid="stChatMessage"])::-webkit-scrollbar {
-    display: none;
+[data-testid="stForm"] [data-testid="stTextInput"] input::placeholder { color: #92a1ae; opacity: 1; }
+[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {
+    min-height: 2.5rem;
+    border-radius: 50%;
+    background: #233848;
+    border: 1px solid #354550;
+    color: #b7dff4;
+}
+[data-testid="stForm"]:focus-within {
+    border-color: #6592ac;
+    box-shadow: 0 0 0 3px rgba(112,164,193,.12), 0 8px 26px rgba(0,0,0,.24);
 }
 
 /* Ensure chat messages have proper spacing */
@@ -385,7 +381,16 @@ div[data-testid="stButton"] button:hover p {
 [data-testid="stAlert"] { background: #17232d; border-color: #344756; color: var(--ink); }
 [data-testid="stExpander"] { background: rgba(21,31,41,.72); border-color: #30404d; }
 @media (max-width: 760px) {
-    [data-testid="stMain"] .block-container { padding: 1rem 1rem 5.5rem; }
+    section.main,
+    [data-testid="ScrollToBottomContainer"] {
+        width: 100%;
+        margin-left: 0;
+    }
+    [data-testid="stAppViewBlockContainer"] { padding: 1rem 1rem 7rem; }
+    [data-testid="stForm"] {
+        left: 50%;
+        width: calc(100vw - 2rem);
+    }
     .welcome { margin-top: 8vh; }
     .welcome h1 { font-size: 29px; }
 }
@@ -471,7 +476,7 @@ def main():
                     with file_col:
                         st.caption(pdf.name)
                     with delete_col:
-                        if st.button("Delete", key=f"delete_pdf_{index}", help=f"Delete {pdf.name}"):
+                        if st.button("🗑️", key=f"delete_pdf_{index}", help=f"Delete {pdf.name}"):
                             st.session_state.pending_delete = pdf.name
 
                 if st.session_state.pending_delete:
@@ -515,10 +520,29 @@ def main():
                         for citation in message["citations"]:
                             st.caption(f"{citation['source']} (Page {citation['page_number']})")
 
-    # Fixed input area at the bottom
-    question = st.chat_input("Ask about your documents", disabled=chunk_count == 0)
-    if question:
-        handle_question(question)
+        with st.form("chat_composer", clear_on_submit=True):
+            question_col, send_col = st.columns([12, 1])
+            with question_col:
+                question = st.text_input(
+                    "Ask about your documents",
+                    placeholder="Ask a follow-up question",
+                    label_visibility="collapsed",
+                    disabled=chunk_count == 0
+                )
+            with send_col:
+                submitted = st.form_submit_button(
+                    "↑",
+                    help="Send question",
+                    type="primary",
+                    disabled=chunk_count == 0,
+                    use_container_width=True
+                )
+
+        if submitted:
+            if not question.strip():
+                st.warning("Enter a question before sending.")
+            elif handle_question(question):
+                st.rerun()
 
 
 def save_uploaded_files(uploaded_files):
@@ -599,14 +623,14 @@ def clear_index():
         st.error(f"Error clearing index: {e}")
 
 
-def handle_question(question):
+def handle_question(question: str) -> bool:
     """Handle user question and generate answer."""
     # Validate question in UI
     try:
         validated_question = validate_question(question)
     except ValidationError as e:
         st.error(f"Invalid question: {e}")
-        return
+        return False
     
     # Add user message to history
     if "messages" not in st.session_state:
@@ -674,6 +698,7 @@ def handle_question(question):
                     "citations": [],
                     "timestamp": datetime.now().isoformat()
                 })
+    return True
 
 
 if __name__ == "__main__":
